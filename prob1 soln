@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+int solution(vector<int> &A, int R) {
+    int N = A.size();
+    unordered_map<int, int> globalFreq; 
+    unordered_map<int, int> windowFreq; 
+    for (int item : A) {
+        globalFreq[item]++;
+    }
+
+    int totalDistinct = globalFreq.size(); 
+    int completelyInside = 0; 
+    int maxDistinctOutside = 0;
+
+    for (int i = 0; i < N; ++i) {
+        int currentItem = A[i];
+        windowFreq[currentItem]++;
+
+        if (windowFreq[currentItem] == globalFreq[currentItem]) {
+            completelyInside++;
+        }
+
+        if (i >= R) {
+            int leftItem = A[i - R];
+            if (windowFreq[leftItem] == globalFreq[leftItem]) {
+                completelyInside--; 
+            }
+            windowFreq[leftItem]--;
+            if (windowFreq[leftItem] == 0) {
+                windowFreq.erase(leftItem);
+            }
+        }
+        if (i >= R - 1) { 
+            int distinctOutside = totalDistinct - completelyInside;
+            maxDistinctOutside = max(maxDistinctOutside, distinctOutside);
+        }
+    }
+
+    return maxDistinctOutside;
+}
+
+int main() {
+    vector<int> A1 = {2, 1, 2, 3, 2, 2};
+    int R1 = 3;
+    cout << "Example 1: " << solution(A1, R1) << endl;
+
+    vector<int> A2 = {2, 3, 1, 1, 2};
+    int R2 = 2;
+    cout << "Example 2: " << solution(A2, R2) << endl; 
+
+    vector<int> A3 = {20, 10, 10, 10, 30, 20};
+    int R3 = 3;
+    cout << "Example 3: " << solution(A3, R3) << endl; 
+
+    vector<int> A4 = {1, 10000, 1};
+    int R4 = 3;
+    cout << "Example 4: " << solution(A4, R4) << endl; 
+    return 0;
+}
